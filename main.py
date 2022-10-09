@@ -21,49 +21,61 @@ class GameSprite(sprite.Sprite):
     def draw(self):
         window.blit(self.image, self.rect)
 
+class Player(GameSprite):
+    def __init__(self,image_name,x,y,width,height,speed,dmg):
+        super().__init__(image_name,x,y,width,height)
+        self.speed = speed
+        self.dmg = dmg 
+        self.fly = False
         
-class Bird(GameSprite):
-    def __init__(self):
-        super().__init__("bird.png",100,467,30,30)
-        self.speed = 10
-        self.dmg = 20 
 
-class Bird1(GameSprite):
+        
+class Bird(Player):
     def __init__(self):
-        super().__init__("bird1.png",60,467,30,30)
-        self.speed = 30
-        self.dmg = 10
+        super().__init__("bird.png",100,467,30,30,10,20)
 
-class Bird2(GameSprite):
+
+class Bird1(Player):
     def __init__(self):
-        super().__init__("bird2.png",140,467,30,30)
+        super().__init__("bird1.png",60,467,30,30,10,20 )
+
+
+class Bird2(Player):
+    def __init__(self):
+        super().__init__("bird2.png",140,467,30,30,10,20 )
         self.speed = 7
         self.dmg = 30 
 
+class Enemy(GameSprite):
+    def __init__(self,image_name,x,y,width,height,hp):
+        super().__init__(image_name,x,y,width,height)
+        self.hp = hp
+
         
     
-class Pig(GameSprite):
+class Pig(Enemy):
     def __init(self):
-        super().__init__("pig.png",400,467,30,30)
-        self.hp = 10
+        super().__init__("pig.png",400,467,30,30,10)
 
 
-#class Wall(sprite.Sprite):
-    #def __init(self,x,y,width,height):
-       # super().__init__("beam.png",x,y,width,height)
-        #self.rect.
 
+class Wall(GameSprite):
+    def __init__(self,image_name,x,y,width,height,hp):
+         super().__init__("wood.png",450 ,400,40,40)
+         
 
 
 
 bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
+beam = Wall("wood.png",450 ,467,50,50,30)
 bird = Bird()
 bird1 = Bird1()
 bird2 = Bird2()
-pig = Pig("pig.png",600,467,30,30)
+pig = Pig("pig.png",600,467,30,30,30)
 while True:
 
     window.blit(bg_image,(0,0))
+    beam.draw()
     pig.draw()
     bird.draw()
     bird1.draw()

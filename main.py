@@ -32,17 +32,17 @@ class Player(GameSprite):
         
 class Bird(Player):
     def __init__(self):
-        super().__init__("bird1.png",100,467,30,30,10,20)
+        super().__init__("bird.png",100,467,30,30,10,20)
 
 
 class Bird1(Player):
     def __init__(self):
-        super().__init__("bird2.png",60,467,30,30,10,20 )
+        super().__init__("bird1.png",60,467,30,30,10,20 )
 
 
 class Bird2(Player):
     def __init__(self):
-        super().__init__("bird3.png",140,467,30,30,10,20 )
+        super().__init__("bird2.png",140,467,30,30,10,20 )
         self.speed = 7
         self.dmg = 30 
 
@@ -60,15 +60,15 @@ class Pig(Enemy):
 
 
 class Wall(GameSprite):
-    def __init__(self,image_name,x,y,width,height,hp):
+    def __init__(self,image_name,x,y,width,height):
          super().__init__(image_name,x,y,width,height)
          
 
 
 
 bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
-beam = Wall("wood.png",580 ,440,10,60,30)
-beam1 = Wall("beam.png",580 ,300,10,60,30)
+beam = Wall("wood.png",450 ,300,10,50)
+beam2 = Wall("wood2.png",450 ,450,10,50)
 bird = Bird()
 bird1 = Bird1()
 bird2 = Bird2()
@@ -77,7 +77,7 @@ while True:
 
     window.blit(bg_image,(0,0))
     beam.draw()
-    beam1.draw()
+    beam2.draw()
     pig.draw()
     bird.draw()
     bird1.draw()

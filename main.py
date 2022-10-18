@@ -1,7 +1,6 @@
 from pygame import *
 mixer.init()
 font.init()
-init()
 WIDTH = 700
 HEIGHT = 500
 window = display.set_mode((WIDTH,HEIGHT))
@@ -16,8 +15,8 @@ class GameSprite(sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.rect.width = width
-        self.rect.height = height
+        self.width = width
+        self.height = height
     def draw(self):
         window.blit(self.image, self.rect)
 
@@ -68,12 +67,16 @@ class Wall(GameSprite):
 
 bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
 beam = Wall("wood.png",450 ,300,10,50)
-beam2 = Wall("wood2.png",450 ,450,10,50)
+beam2 = Wall("wood2.png",450 ,450,50,10)
 bird = Bird()
 bird1 = Bird1()
 bird2 = Bird2()
 pig = Pig("pig.png",600,467,30,30,30)
-while True:
+run = True
+while run:
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
 
     window.blit(bg_image,(0,0))
     beam.draw()

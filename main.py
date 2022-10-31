@@ -6,7 +6,9 @@ HEIGHT = 500
 window = display.set_mode((WIDTH,HEIGHT))
 display.set_caption("Angry Birds")
 clock = time.Clock()
-mixer.music.load("angry-birds.ogg")
+#mixer.music.load("angry-birds.ogg")
+start_img = pygame.image.load('start_btn.png')
+exit_img = pygame.image.load('exit_btn.png')
 
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name,x,y,width,height):
@@ -33,7 +35,29 @@ class Player(GameSprite):
                 self.rect.x = 192
                 self.rect.y = 395
 
+class Button():
+	def __init__(self, x, y, image, scale):
+		width = image.get_width()
+		height = image.get_height()
+		self.image = transform.scale(image.load(image_name),(width,height))
+		self.rect = self.image.get_rect()
+		self.rect.topleft = (x, y)
+		self.clicked = False
 
+	def draw(self,surface):
+		action = False
+		pos = pygame.mouse.get_pos()
+		if self.rect.collidepoint(pos):
+			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+				self.clicked = True
+				action = True
+
+		if pygame.mouse.get_pressed()[0] == 0:
+			self.clicked = False
+
+		surface.blit(self.image, (self.rect.x, self.rect.y))
+
+		return action
             
 
 
@@ -138,17 +162,25 @@ def level2(bg_img):
 
 bow = Bow()
 run = True
-level2("background2.png")
+#level2("background2.png")
 while run:
-    for e in event.get():
-        if e.type == QUIT:
-            run = False
 
-    window.blit(bg_image,(0,0))
-    birds.update()
-    bow.draw()
-    walls.draw(window)
-    pigs.draw(window)
-    birds.draw(window)
-    display.update()
-    clock.tick(60)
+	screen.fill((202, 228, 241))
+
+	if start_button.draw(screen):
+		print('START')
+	if exit_button.draw(screen):
+		print('EXIT')
+
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			run = False
+
+window.blit(bg_image,(0,0))
+birds.update()
+bow.draw()
+walls.draw(window)
+pigs.draw(window)
+birds.draw(window)
+display.update()
+clock.tick(60)

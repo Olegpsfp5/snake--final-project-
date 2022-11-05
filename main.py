@@ -1,4 +1,5 @@
 from pygame import *
+init()
 mixer.init()
 font.init()
 WIDTH = 900
@@ -6,9 +7,8 @@ HEIGHT = 500
 window = display.set_mode((WIDTH,HEIGHT))
 display.set_caption("Angry Birds")
 clock = time.Clock()
-#mixer.music.load("angry-birds.ogg")
-start_img = pygame.image.load('start_btn.png')
-exit_img = pygame.image.load('exit_btn.png')
+mixer.music.load("angry-birds.ogg")
+
 
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name,x,y,width,height):
@@ -35,29 +35,21 @@ class Player(GameSprite):
                 self.rect.x = 192
                 self.rect.y = 395
 
-class Button():
-	def __init__(self, x, y, image, scale):
-		width = image.get_width()
-		height = image.get_height()
-		self.image = transform.scale(image.load(image_name),(width,height))
-		self.rect = self.image.get_rect()
-		self.rect.topleft = (x, y)
-		self.clicked = False
 
-	def draw(self,surface):
-		action = False
-		pos = pygame.mouse.get_pos()
-		if self.rect.collidepoint(pos):
-			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-				self.clicked = True
-				action = True
 
-		if pygame.mouse.get_pressed()[0] == 0:
-			self.clicked = False
 
-		surface.blit(self.image, (self.rect.x, self.rect.y))
+class StartButton(GameSprite):
+    def __init__(self):
+        super().__init__("start_btn.png",380,150,150,100)
+    def play():
+        if click[0]:
+            x,y = mouse.get_pos()
+        if self.rect.collidepoint(x,y) and level1 != True:
+            level1()
 
-		return action
+
+    
+
             
 
 
@@ -93,6 +85,8 @@ class Pig(Enemy):
 class Wall(GameSprite):
     def __init__(self,image_name,x,y,width,height):
          super().__init__(image_name,x,y,width,height)
+
+
 class Bow(GameSprite):
     def __init__(self):
          super().__init__("bow.png",170,400,70,90)
@@ -101,7 +95,9 @@ class Bow(GameSprite):
 walls = sprite.Group()
 pigs = sprite.Group()
 birds = sprite.Group()
+bows = sprite.Group()
 bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
+start_btn = StartButton()
 
 def level1(bg_img):
     global bg_image
@@ -123,6 +119,8 @@ def level1(bg_img):
     birds.add(bird1,bird2,bird)
     walls.add(wood1,wood2,wood3,wood4,wood5,wood6)
     pigs.add(pigl1,pigl2)
+    bow = Bow()
+    bows.add(bow)
     
 
 def level2(bg_img):
@@ -158,29 +156,23 @@ def level2(bg_img):
     bird = Bird()
     bird1 = Bird1()
     bird2 = Bird2()
+    bow = Bow()
     birds.add(bird1,bird2,bird)
 
-bow = Bow()
+
 run = True
-#level2("background2.png")
+#level1("background2.png")
 while run:
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
 
-	screen.fill((202, 228, 241))
-
-	if start_button.draw(screen):
-		print('START')
-	if exit_button.draw(screen):
-		print('EXIT')
-
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			run = False
-
-window.blit(bg_image,(0,0))
-birds.update()
-bow.draw()
-walls.draw(window)
-pigs.draw(window)
-birds.draw(window)
-display.update()
-clock.tick(60)
+    window.blit(bg_image,(0,0))
+    start_btn.draw()
+    birds.update()
+    walls.draw(window)
+    pigs.draw(window)
+    birds.draw(window)
+    bows.draw(window)
+    display.update()
+    clock.tick(60)

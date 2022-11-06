@@ -1,5 +1,9 @@
 from pygame import *
+<<<<<<< HEAD
 
+=======
+init()
+>>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
 mixer.init()
 font.init()
 WIDTH = 900
@@ -9,10 +13,13 @@ display.set_caption("Angry Birds")
 clock = time.Clock()
 mixer.music.load("angry-birds.ogg")
 
+<<<<<<< HEAD
 run = True
 start = False
 finish = False
 menu =  True 
+=======
+>>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
 
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name,x,y,width,height):
@@ -51,6 +58,7 @@ class Player(GameSprite):
 class StartButton(GameSprite):
     def __init__(self):
         super().__init__("start_btn.png",380,150,150,100)
+<<<<<<< HEAD
         self.level = 1 
     def update(self):
         global menu, start
@@ -67,6 +75,18 @@ class StartButton(GameSprite):
                 
                 menu = False
                 start = True              
+=======
+    def play():
+        if click[0]:
+            x,y = mouse.get_pos()
+        if self.rect.collidepoint(x,y) and level1 != True:
+            level1()
+
+
+    
+
+            
+>>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
 
 
 class Bird(Player):
@@ -179,7 +199,11 @@ def level2():
     bows.add(bow)
 
 
+<<<<<<< HEAD
 
+=======
+run = True
+>>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
 #level1("background2.png")
 while run:
     for e in event.get():
@@ -187,6 +211,7 @@ while run:
             run = False
 
     window.blit(bg_image,(0,0))
+<<<<<<< HEAD
     if menu:
         start_btn.draw()
         start_btn.update()
@@ -196,5 +221,13 @@ while run:
         pigs.draw(window)
         bows.draw(window)
         birds.draw(window)
+=======
+    start_btn.draw()
+    birds.update()
+    walls.draw(window)
+    pigs.draw(window)
+    birds.draw(window)
+    bows.draw(window)
+>>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
     display.update()
     clock.tick(60)

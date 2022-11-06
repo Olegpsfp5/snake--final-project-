@@ -1,4 +1,5 @@
 from pygame import *
+
 mixer.init()
 font.init()
 WIDTH = 900
@@ -7,6 +8,11 @@ window = display.set_mode((WIDTH,HEIGHT))
 display.set_caption("Angry Birds")
 clock = time.Clock()
 mixer.music.load("angry-birds.ogg")
+
+run = True
+start = False
+finish = False
+menu =  True 
 
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name,x,y,width,height):
@@ -32,9 +38,35 @@ class Player(GameSprite):
             if self.rect.collidepoint(x,y) and self.rect.x != 170 and self.rect.y != 380:
                 self.rect.x = 192
                 self.rect.y = 395
+    def move(self):
+        click = mouse.get_pressed()
+        if click[1]:
+            x,y = mouse.get_pos()
+            if self.rect.collidepoint(x,y):
+                self.rect.x += 20
 
 
-            
+
+
+class StartButton(GameSprite):
+    def __init__(self):
+        super().__init__("start_btn.png",380,150,150,100)
+        self.level = 1 
+    def update(self):
+        global menu, start
+        click = mouse.get_pressed()
+        if click[0]:
+            x,y = mouse.get_pos()
+            if self.rect.collidepoint(x,y) and not start:
+                if self.level == 1:
+                    level1()
+                elif self.level == 2:
+                    level2()
+                else:
+                    level1()
+                
+                menu = False
+                start = True              
 
 
 class Bird(Player):
@@ -69,6 +101,8 @@ class Pig(Enemy):
 class Wall(GameSprite):
     def __init__(self,image_name,x,y,width,height):
          super().__init__(image_name,x,y,width,height)
+
+
 class Bow(GameSprite):
     def __init__(self):
          super().__init__("bow.png",170,400,70,90)
@@ -77,11 +111,13 @@ class Bow(GameSprite):
 walls = sprite.Group()
 pigs = sprite.Group()
 birds = sprite.Group()
+bows = sprite.Group()
 bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
+start_btn = StartButton()
 
-def level1(bg_img):
+def level1():
     global bg_image
-    bg_image = transform.scale(image.load(bg_img),(WIDTH,HEIGHT))
+    bg_image = transform.scale(image.load("background.png"),(WIDTH,HEIGHT))
 
     wood1 = Wall("wood.png",675 ,390,15,100)
     wood2 = Wall("wood2.png",575 ,390,100,15)
@@ -99,10 +135,14 @@ def level1(bg_img):
     birds.add(bird1,bird2,bird)
     walls.add(wood1,wood2,wood3,wood4,wood5,wood6)
     pigs.add(pigl1,pigl2)
+    bow = Bow()
+    bows.add(bow)
     
 
-def level2(bg_img):
+def level2():
     global bg_image
+    bg_image = transform.scale(image.load("background2.png"),(WIDTH,HEIGHT))
+
     beam1 = Wall("wood.png",840 ,440,10,50)
     beam2 = Wall("wood.png",790 ,440,10,50)
     beam3 = Wall("wood2.png",790 ,430,60,10)
@@ -134,21 +174,27 @@ def level2(bg_img):
     bird = Bird()
     bird1 = Bird1()
     bird2 = Bird2()
+    bow = Bow()
     birds.add(bird1,bird2,bird)
+    bows.add(bow)
 
-bow = Bow()
-run = True
-level2("background2.png")
+
+
+#level1("background2.png")
 while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
 
     window.blit(bg_image,(0,0))
-    birds.update()
-    bow.draw()
-    walls.draw(window)
-    pigs.draw(window)
-    birds.draw(window)
+    if menu:
+        start_btn.draw()
+        start_btn.update()
+    elif not menu and start:
+        birds.update()
+        walls.draw(window)
+        pigs.draw(window)
+        bows.draw(window)
+        birds.draw(window)
     display.update()
     clock.tick(60)

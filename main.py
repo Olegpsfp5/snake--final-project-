@@ -1,9 +1,16 @@
 from pygame import *
-<<<<<<< HEAD
+import pymunk as pm
+from pymunk import Vec2d
+from pymunk.pygame_util import *
+from pymunk.vec2d import Vec2d
+import math
 
-=======
-init()
->>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
+
+
+pm.pygame_util.positive_y_is_up = False
+
+
+
 mixer.init()
 font.init()
 WIDTH = 900
@@ -13,14 +20,30 @@ display.set_caption("Angry Birds")
 clock = time.Clock()
 mixer.music.load("angry-birds.ogg")
 
-<<<<<<< HEAD
+
+pm.pygame_util.DrawOptions(window)
+
+space = pm.Space() # створюємо простір
+space.gravity = (0.0, 700.0) #додаємо гравітацію
+
+
+class Box: #клас "Коробка" - щоб елементи не вилітали за краї екрану
+    def __init__(self, p0=(0, 0), p1=(WIDTH, HEIGHT), d=0):
+        x0, y0 = p0
+        x1, y1 = p1
+        ps = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+        for i in range(4):
+            segment = pm.Segment(space.static_body, ps[i], ps[(i+1) % 4], d)
+            segment.elasticity = 1
+            segment.friction = 1
+            space.add(segment)
+
+frame = Box() #рамка
 run = True
 start = False
 finish = False
 menu =  True 
-=======
->>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
-
+  
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name,x,y,width,height):
         super().__init__()
@@ -35,30 +58,30 @@ class GameSprite(sprite.Sprite):
     
 
 class Player(GameSprite):
-    def __init__(self,image_name,x,y,width,height,speed,dmg):
+    def __init__(self,image_name,x,y,width,height,speed):
         super().__init__(image_name,x,y,width,height)
-    def update(self):
-        click = mouse.get_pressed()
+        mass = 1 #маса пташки
+        radius = 22 # радіус пташки
+        inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+        body = pm.Body(mass, inertia) #створюємо тіло
+        body.position = x, y
         
-        if click[2]:
-            x,y = mouse.get_pos()
-            if self.rect.collidepoint(x,y) and self.rect.x != 170 and self.rect.y != 380:
-                self.rect.x = 192
-                self.rect.y = 395
-    def move(self):
-        click = mouse.get_pressed()
-        if click[1]:
-            x,y = mouse.get_pos()
-            if self.rect.collidepoint(x,y):
-                self.rect.x += 20
-
-
-
+        shape = pm.Circle(body, radius, (0, 0)) #додаємо форму кола
+        shape.elasticity = 0.5 #задаємо пружність
+        shape.friction = 0.5 #тертя
+        shape.collision_type = 0
+        space.add(body, shape) #додаємо в простір
+        self.body = body 
+        self.shape = shape
+    def draw(self):
+        angle = self.body.angle
+        img = transform.rotate(self.image, math.degrees(angle))
+        self.rect.center = to_pygame(self.body.position, window)
+        window.blit(img, self.rect)
 
 class StartButton(GameSprite):
     def __init__(self):
         super().__init__("start_btn.png",380,150,150,100)
-<<<<<<< HEAD
         self.level = 1 
     def update(self):
         global menu, start
@@ -75,7 +98,7 @@ class StartButton(GameSprite):
                 
                 menu = False
                 start = True              
-=======
+
     def play():
         if click[0]:
             x,y = mouse.get_pos()
@@ -86,23 +109,21 @@ class StartButton(GameSprite):
     
 
             
->>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
-
 
 class Bird(Player):
     def __init__(self):
-        super().__init__("bird.png",100,452,45,45,10,20)
+        super().__init__("bird.png",100,452,45,45,10)
     
 
 
 class Bird1(Player):
     def __init__(self):
-        super().__init__("bird1.png",60,452,45,45,10,20)
+        super().__init__("bird1.png",60,452,45,45,10)
 
 
 class Bird2(Player):
     def __init__(self):
-        super().__init__("bird2.png",145,452,45,45,10,20)
+        super().__init__("bird2.png",145,452,45,45,10)
         self.speed = 7
         self.dmg = 30 
 
@@ -150,9 +171,9 @@ def level1():
     pigl1 = Pig("pig.png",605,445,45,45)
     pigl2 = Pig("pig.png",603,345,45,45)
     bird = Bird()
-    bird1 = Bird1()
-    bird2 = Bird2()
-    birds.add(bird1,bird2,bird)
+    #bird1 = Bird1()
+    #bird2 = Bird2()
+    birds.add(bird)
     walls.add(wood1,wood2,wood3,wood4,wood5,wood6)
     pigs.add(pigl1,pigl2)
     bow = Bow()
@@ -192,42 +213,63 @@ def level2():
     pig6 = Pig("pig.png",745,340,30,30)
     pigs.add(pig1,pig2,pig3,pig4,pig5,pig6)
     bird = Bird()
-    bird1 = Bird1()
-    bird2 = Bird2()
+    #bird1 = Bird1()
+    #bird2 = Bird2()
     bow = Bow()
-    birds.add(bird1,bird2,bird)
+    birds.add(bird)
     bows.add(bow)
 
 
-<<<<<<< HEAD
+active_bird = None
+aim_pos1 = (175,420)
+aim_pos2 = (220,420)
+scoping = False
+points = 0
 
-=======
-run = True
->>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
+
 #level1("background2.png")
 while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
-
+        if e.type == MOUSEBUTTONDOWN:
+            p = from_pygame(e.pos, window)
+            x,y = e.pos
+            for bird in birds:
+                if bird.rect.collidepoint(x,y):
+                    scoping = True
+                    active_bird = bird
+                    bird.body.position = p
+        elif e.type == MOUSEMOTION:
+            if active_bird and scoping:
+                active_bird.body.position =from_pygame(e.pos,window)
+        elif e.type == MOUSEBUTTONUP:
+            if scoping:
+                scoping = False
+                p0 = Vec2d(aim_pos2)
+                p1 = from_pygame(e.pos,window)
+                impulse = 5 * Vec2d(p0-p1).rotated(-active_bird.body.angle)
+                active_bird.body.apply_impulse_at_local_point(impulse)
+        
     window.blit(bg_image,(0,0))
-<<<<<<< HEAD
     if menu:
         start_btn.draw()
         start_btn.update()
     elif not menu and start:
+        if not scoping:
+            space.step(1 / 60)
         birds.update()
         walls.draw(window)
         pigs.draw(window)
         bows.draw(window)
-        birds.draw(window)
-=======
-    start_btn.draw()
-    birds.update()
-    walls.draw(window)
-    pigs.draw(window)
-    birds.draw(window)
-    bows.draw(window)
->>>>>>> 17ae3a8b8344b6aa1a3718aedb27ee9fd839d45e
+        for bird in birds:
+            if scoping and bird == active_bird:
+                x,y =  active_bird.rect.midleft
+                p = (x+10,y+15)
+                draw.line(window,(0,0,0),p, aim_pos1,3)
+                bird.draw()
+                draw.line(window,(0,0,0),p, aim_pos2,3)
+            else:
+                bird.draw()  
     display.update()
     clock.tick(60)

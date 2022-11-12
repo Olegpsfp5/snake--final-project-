@@ -19,7 +19,7 @@ window = display.set_mode((WIDTH,HEIGHT))
 display.set_caption("Angry Birds")
 clock = time.Clock()
 mixer.music.load("angry-birds.ogg")
-
+mixer.music.play()
 
 pm.pygame_util.DrawOptions(window)
 
@@ -280,8 +280,13 @@ while run:
             space.remove(active_bird.body,active_bird.shape)
             walls = sprite.Group()
             pigs = sprite.Group()
+            birds = sprite.Group()
             menu = True
             start = False
-            start_btn.level +=1
+            if  start_btn.level == 1:
+                start_btn.level +=1
+            else:
+                start_btn.level -= 1
+
     display.update()
     clock.tick(60)

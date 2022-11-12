@@ -148,7 +148,6 @@ class Bow(GameSprite):
     def __init__(self):
          super().__init__("bow.png",170,400,70,90)
 
-
 walls = sprite.Group()
 pigs = sprite.Group()
 birds = sprite.Group()
@@ -225,7 +224,7 @@ aim_pos1 = (175,420)
 aim_pos2 = (220,420)
 scoping = False
 points = 0
-
+spritecollide = False
 
 #level1("background2.png")
 while run:
@@ -248,7 +247,7 @@ while run:
                 scoping = False
                 p0 = Vec2d(aim_pos2)
                 p1 = from_pygame(e.pos,window)
-                impulse = 5 * Vec2d(p0-p1).rotated(-active_bird.body.angle)
+                impulse = 7 * Vec2d(p0-p1).rotated(-active_bird.body.angle)
                 active_bird.body.apply_impulse_at_local_point(impulse)
         
     window.blit(bg_image,(0,0))
@@ -263,6 +262,12 @@ while run:
         pigs.draw(window)
         bows.draw(window)
         for bird in birds:
+            collides = sprite.spritecollide(bird,walls,True)
+            for hit in collides:
+                points += 1
+            collides = sprite.spritecollide(bird,pigs,True)
+            for hit in collides:
+                points +=10
             if scoping and bird == active_bird:
                 x,y =  active_bird.rect.midleft
                 p = (x+10,y+15)
@@ -270,6 +275,13 @@ while run:
                 bird.draw()
                 draw.line(window,(0,0,0),p, aim_pos2,3)
             else:
-                bird.draw()  
+                bird.draw()
+        if len(pigs) == 0:
+            space.remove(active_bird.body,active_bird.shape)
+            walls = sprite.Group()
+            pigs = sprite.Group()
+            menu = True
+            start = False
+            start_btn.level +=1
     display.update()
     clock.tick(60)
